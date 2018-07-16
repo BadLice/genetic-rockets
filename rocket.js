@@ -67,7 +67,7 @@ class Rocket
 
     if(this.position.x<-(width/2)||this.position.x>(width/2)||this.position.y>height||this.position.y<0)
     {
-      this.fitness*=0.1;
+      this.fitness*=0.3;
       this.finished=true;
     }
 

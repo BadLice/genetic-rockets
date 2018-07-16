@@ -6,6 +6,7 @@ class Rocket
     this.position=pos.copy();
     this.angle=radians(0);
     this.fitness=0;
+    this.prob=0;
     this.dna=dna;
     this.r=5;
     this.genesIndex=0;

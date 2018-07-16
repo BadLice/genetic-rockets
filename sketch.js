@@ -36,8 +36,6 @@ function draw()
   if(people.toUpdate)
   {
     fitP.html("max fitnes: "+people.maxFitness()+"<br> speed:"+people.velocity)
-
-    people.naturalSelection();
     people.generate();
     people.toUpdate=false;
   }

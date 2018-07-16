@@ -1,6 +1,6 @@
 var target;
 var mutationRate = 0.001;
-var maxPop = 20;
+var maxPop = 15;
 var people;
 var roc;
 
@@ -8,7 +8,7 @@ function setup()
 {
 
   createCanvas(800,600);
-  background(0)
+
   target = new Circle(0,20,15);
 
   people = new Population(target,mutationRate,maxPop)
@@ -26,7 +26,7 @@ function setup()
 
 function draw()
 {
-  background(1)
+  background(60)
   translate(width/2,0);
   people.draw();
   people.update();

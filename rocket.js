@@ -7,7 +7,7 @@ class Rocket
     this.angle=radians(0);
     this.fitness=0;
     this.dna=dna;
-    this.r=4;
+    this.r=5;
     this.genesIndex=0;
     this.finished=false;
     this.id=id;
@@ -32,7 +32,7 @@ class Rocket
 
   draw()
   {
-      stroke(255)
+      stroke(0)
       let theta = this.velocity.heading() + PI / 2;
       let r = this.r;
 

@@ -136,7 +136,7 @@ class Population
           if(o==current)
             fill(0,0,255)
           else
-            fill(255);
+            fill(200);
 
           o.draw();
           if(!o.finished)

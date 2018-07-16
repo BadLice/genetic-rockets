@@ -9,7 +9,7 @@ class Circle
 
     draw()
     {
-      stroke(255)
+      stroke(0)
       fill(255,0,0);
       ellipse(this.x,this.y,this.r*2)
     }

@@ -17,18 +17,16 @@ class Rocket
 
   update()
   {
-        if(!this.finished)
-       {
-         this.velocity.rotate(this.dna.genes[this.genesIndex]);
-         this.position.sub(this.velocity);
-         if(this.genesIndex<this.dna.genes.length-1)
+    if(!this.finished)
+     {
+       this.velocity.rotate(this.dna.genes[this.genesIndex]);
+       this.position.sub(this.velocity);
+
+       if(this.genesIndex<this.dna.genes.length-1)
          this.genesIndex++;
-         else
-         {
-           this.finished=true;
-         }
-       }
-       this.temp++;
+       else
+         this.finished=true;
+     }
   }
 
   draw()
@@ -60,18 +58,20 @@ class Rocket
   {
     let d = dist(this.position.x, this.position.y, target.x, target.y);
     this.fitness = pow(1 / d, 2);
+
+    //reaches the target
     if(target.collision(this.position))
     {
       this.fitness*=1000;
       this.finished=true;
     }
-
+    //hits the margins
     if(this.position.x<-(width/2)||this.position.x>(width/2)||this.position.y>height||this.position.y<0)
     {
       this.fitness*=0.3;
       this.finished=true;
     }
-
+    //hits the obstacle
     if(this.collision)
     {
       this.fitness*=0.1;

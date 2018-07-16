@@ -13,6 +13,8 @@ class Rocket
     this.finished=false;
     this.id=id;
     this.collision=false;
+    this.hitTarget=false;
+    this.time=100000;
   }
 
   update()
@@ -56,27 +58,35 @@ class Rocket
 
   calculateFitness()
   {
+    let vel = this.time;
+    if(vel<1) vel=1;
+
+    let mult = 1;
+
     let d = dist(this.position.x, this.position.y, target.x, target.y);
-    this.fitness = pow(1 / d, 2);
 
     //reaches the target
-    if(target.collision(this.position))
+    if(this.hitTarget)
     {
-      this.fitness*=1000;
+      mult=2;
       this.finished=true;
     }
     //hits the margins
     if(this.position.x<-(width/2)||this.position.x>(width/2)||this.position.y>height||this.position.y<0)
     {
-      this.fitness*=0.3;
+      mult=0.01;
+      vel=1000000;
       this.finished=true;
     }
     //hits the obstacle
     if(this.collision)
     {
-      this.fitness*=0.1;
+      vel=1000000;
+      mult=0.01;
       this.finished=true;
     }
+
+    this.fitness = pow( 1/(d*(this.time)), 4)*mult;
   }
 
 

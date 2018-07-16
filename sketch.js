@@ -1,10 +1,10 @@
 var target;
-var mutationRate = 0.001;
-var maxPop = 15;
+var mutationRate = 0.01;
+var maxPop = 200;
 var people;
 var roc;
 var obstacle;
-
+var precMax=0;
 function setup()
 {
 
@@ -35,7 +35,11 @@ function draw()
   people.calculateFitness();
   if(people.toUpdate)
   {
-    fitP.html("max fitnes: "+people.maxFitness()+"<br> speed:"+people.velocity)
+    var maxF=people.maxFitness();
+    //fitnes>1 its getting better, <1 its getting badder
+    fitP.html("max fitnes: "+map(maxF,0,precMax,0,1)+"<br> speed:"+people.velocity)
+    precMax=maxF;
+
     people.generate();
     people.toUpdate=false;
   }

@@ -10,6 +10,7 @@ class Population
         this.toUpdate=false;
         this.velocity=4;
         this.obstacle=obstacle;
+        this.pos=0;
 
         for(var i=0;i<maxPop;i++)
         {
@@ -48,6 +49,7 @@ class Population
         }
         this.population=newPop;
         this.generation++;
+        this.pos=0;
       }
 
       calculateFitness()
@@ -85,15 +87,16 @@ class Population
 
       getBest()
       {
-        var max = -1;
+        var max = -100;
         var maxo;
         for(var o of this.population)
-          if(o.fitness>max)
           {
-            maxo=o.genes.join("");
-            max=o.fitness;
+            if(o.fitness>max)
+            {
+              maxo=o;
+              max=o.fitness;
+            }
           }
-
         return maxo;
       }
 
@@ -104,11 +107,18 @@ class Population
         for(var o of this.population)
         {
           if(o==current)
-            fill(0,0,255)
-          else
-            fill(200);
+           {
+             fill(0,0,255)
+             o.draw();
+           }
+          else if(o.hitTarget)
+          {
+            fill(0,255,0)
+            o.draw();
+          }
+          //o.draw()
 
-          o.draw();
+
           if(!o.finished)
             up=false;
         }
@@ -122,17 +132,26 @@ class Population
         {
           for(var o of this.population)
           {
-
-            //check if the rocket collides with the obstacle
-            if(this.obstacle.collision(o.position))
+            if(!o.finished)
             {
-              o.collision=true;
-              o.finished=true;
+
+              //check if the rocket collides with the obstacle
+              if(this.obstacle.collision(o.position))
+              {
+                o.collision=true;
+                o.finished=true;
+              }
+              if(this.target.collision(o.position))
+              {
+                o.hitTarget=true;
+                o.finished=true;
+                o.time=++this.pos;
+                console.log(this.pos);
+              }
+
+              o.update();
             }
-
-            o.update();
           }
-
         }
       }
 

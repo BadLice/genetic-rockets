@@ -1,6 +1,6 @@
 class Population
 {
-      constructor(target,mutationRate,maxPop)
+      constructor(target,obstacle,mutationRate,maxPop)
       {
         this.population = [];
         this.target=target;
@@ -11,6 +11,7 @@ class Population
         this.finished=false;
         this.toUpdate=false;
         this.velocity=4;
+        this.obstacle=obstacle;
 
         for(var i=0;i<maxPop;i++)
         {
@@ -144,7 +145,6 @@ class Population
         }
 
         this.toUpdate=up;
-        // if(up)
       }
 
       update()
@@ -153,6 +153,14 @@ class Population
         {
           for(var o of this.population)
           {
+
+            //check if the rocket collides with the obstacle
+            if(this.obstacle.collision(o.position))
+            {
+              o.collision=true;
+              o.finished=true;
+            }
+
             o.update();
           }
 

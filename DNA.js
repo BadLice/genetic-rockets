@@ -5,7 +5,7 @@ class DNA
     this.genes = [];
     this.target=target;
     this.fitness=0;
-    this.maxMoves=900;
+    this.maxMoves=2000;
 
     for(var i=0;i<this.maxMoves;i++)
     {

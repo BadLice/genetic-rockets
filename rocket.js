@@ -11,6 +11,7 @@ class Rocket
     this.genesIndex=0;
     this.finished=false;
     this.id=id;
+    this.collision=false;
   }
 
   update()
@@ -27,7 +28,6 @@ class Rocket
          }
        }
        this.temp++;
-
   }
 
   draw()
@@ -65,10 +65,16 @@ class Rocket
       this.finished=true;
     }
 
-    if(this.position.x<-(width/2)||this.position.x>(width/2)||this.position.y>height)
+    if(this.position.x<-(width/2)||this.position.x>(width/2)||this.position.y>height||this.position.y<0)
     {
       this.fitness*=0.1;
-      this.finished
+      this.finished=true;
+    }
+
+    if(this.collision)
+    {
+      this.fitness*=0.1;
+      this.finished=true;
     }
   }
 

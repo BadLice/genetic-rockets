@@ -3,6 +3,7 @@ var mutationRate = 0.001;
 var maxPop = 15;
 var people;
 var roc;
+var obstacle;
 
 function setup()
 {
@@ -10,8 +11,8 @@ function setup()
   createCanvas(800,600);
 
   target = new Circle(0,20,15);
-
-  people = new Population(target,mutationRate,maxPop)
+  obstacle = new Obstacle(0-200,(height/2),400,10);
+  people = new Population(target,obstacle,mutationRate,maxPop)
 
   fitP = createP('max fitness: 0<br>speed:'+people.velocity);
   generationP = createP();
@@ -42,6 +43,7 @@ function draw()
   }
 
   target.draw();
+  obstacle.draw();
 
   generationP.html("PRESS ON THE CANVAS TO MOVE THE TARGET!<br>generation: "+people.generation+"<br> mutation rate: "+(mutationRate*100)+"%");
 

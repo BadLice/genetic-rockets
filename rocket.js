@@ -6,28 +6,29 @@ class Rocket
     this.position=pos.copy();
     this.angle=radians(0);
     this.fitness=0;
+    this.prob=0;
     this.dna=dna;
     this.r=5;
     this.genesIndex=0;
     this.finished=false;
     this.id=id;
+    this.collision=false;
+    this.hitTarget=false;
+    this.time=100000;
   }
 
   update()
   {
-        if(!this.finished)
-       {
-         this.velocity.rotate(this.dna.genes[this.genesIndex]);
-         this.position.sub(this.velocity);
-         if(this.genesIndex<this.dna.genes.length-1)
-         this.genesIndex++;
-         else
-         {
-           this.finished=true;
-         }
-       }
-       this.temp++;
+    if(!this.finished)
+     {
+       this.velocity.rotate(this.dna.genes[this.genesIndex]);
+       this.position.sub(this.velocity);
 
+       if(this.genesIndex<this.dna.genes.length-1)
+         this.genesIndex++;
+       else
+         this.finished=true;
+     }
   }
 
   draw()
@@ -57,19 +58,35 @@ class Rocket
 
   calculateFitness()
   {
+    let vel = this.time;
+    if(vel<1) vel=1;
+
+    let mult = 1;
+
     let d = dist(this.position.x, this.position.y, target.x, target.y);
-    this.fitness = pow(1 / d, 2);
-    if(target.collision(this.position))
+
+    //reaches the target
+    if(this.hitTarget)
     {
-      this.fitness*=1000;
+      mult=2;
+      this.finished=true;
+    }
+    //hits the margins
+    if(this.position.x<-(width/2)||this.position.x>(width/2)||this.position.y>height||this.position.y<0)
+    {
+      mult=0.01;
+      vel=1000000;
+      this.finished=true;
+    }
+    //hits the obstacle
+    if(this.collision)
+    {
+      vel=1000000;
+      mult=0.01;
       this.finished=true;
     }
 
-    if(this.position.x<-(width/2)||this.position.x>(width/2)||this.position.y>height)
-    {
-      this.fitness*=0.1;
-      this.finished
-    }
+    this.fitness = pow( 1/(d*(this.time)), 4)*mult;
   }
 
 

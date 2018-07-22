@@ -1,16 +1,16 @@
 class Population
 {
-      constructor(target,mutationRate,maxPop)
+      constructor(target,obstacle,mutationRate,maxPop)
       {
         this.population = [];
         this.target=target;
         this.generation=0;
-        this.matingPool=[];
-        this.matingSize=0;
         this.mutationRate=mutationRate;
         this.finished=false;
         this.toUpdate=false;
         this.velocity=4;
+        this.obstacle=obstacle;
+        this.pos=0;
 
         for(var i=0;i<maxPop;i++)
         {
@@ -20,50 +20,36 @@ class Population
 
       naturalSelection()
       {
-        // Clear the ArrayList
-        this.matingPool = [];
-
-        let maxFitness = 0;
-        for (let i = 0; i < this.population.length; i++) {
-          if (this.population[i].fitness > maxFitness) {
-            maxFitness = this.population[i].fitness;
-          }
+        var sum = 0;
+        for(var o of this.population)
+        {
+          sum+=o.fitness;
         }
-
-        // console.log(maxFitness)
-
-        // Based on fitness, each member will get added to the mating pool a certain number of times
-        // a higher fitness = more entries to mating pool = more likely to be picked as a parent
-        // a lower fitness = fewer entries to mating pool = less likely to be picked as a parent
-        for (let i = 0; i < this.population.length; i++) {
-
-          let fitness = map(this.population[i].fitness, 0, maxFitness, 0, 1);
-          let n = floor(fitness * 100); // Arbitrary multiplier, we can also use monte carlo method
-          for (let j = 0; j < n; j++) { // and pick two random numbers
-            this.matingPool.push(this.population[i]);
-          }
+        //normalizing the probability into the range 0-1
+        for(var i=0;i<this.population.length;i++)
+        {
+          this.population[i].prob=this.population[i].fitness/sum;
         }
-        this.matingSize=this.matingPool.length;
       }
 
       generate()
       {
+        var newPop = []
         for(var i = 0;i<this.population.length;i++)
         {
-          var r1 = floor(random(this.matingSize));
-          var r2 = floor(random(this.matingSize));
 
-          var parent1 = this.matingPool[r1];
-          var parent2 = this.matingPool[r2];
+          var parent1 = this.pickOne();
+          var parent2 = this.pickOne();
 
           var child = parent1.crossover(parent2);
 
           child.mutate(this.mutationRate);
 
-          this.population[i]=new Rocket(createVector(0,height),child,i)
+          newPop[i] = new Rocket(createVector(0,height),child,i);
         }
-
+        this.population=newPop;
         this.generation++;
+        this.pos=0;
       }
 
       calculateFitness()
@@ -83,7 +69,7 @@ class Population
             maxFitness = this.population[i].fitness;
           }
         }
-        return maxFitness
+        return maxFitness;
       }
 
       currentMax()
@@ -101,30 +87,17 @@ class Population
 
       getBest()
       {
-        var max = -1;
+        var max = -100;
         var maxo;
         for(var o of this.population)
-          if(o.fitness>max)
           {
-            maxo=o.genes.join("");
-            max=o.fitness;
+            if(o.fitness>max)
+            {
+              maxo=o;
+              max=o.fitness;
+            }
           }
-
         return maxo;
-      }
-
-      evaluate()
-      {
-        var finish = false;
-        for(var i=0;i<this.population.length; i++)
-        {
-          if(this.target===this.population[i].genes.join(""))
-           {
-             noLoop();
-           }
-
-        }
-        this.finished=finish;
       }
 
       draw()
@@ -134,17 +107,23 @@ class Population
         for(var o of this.population)
         {
           if(o==current)
-            fill(0,0,255)
-          else
-            fill(200);
+           {
+             fill(0,0,255)
+             o.draw();
+           }
+          else if(o.hitTarget)
+          {
+            fill(0,255,0)
+            o.draw();
+          }
+          //o.draw()
 
-          o.draw();
+
           if(!o.finished)
             up=false;
         }
 
         this.toUpdate=up;
-        // if(up)
       }
 
       update()
@@ -153,22 +132,46 @@ class Population
         {
           for(var o of this.population)
           {
-            o.update();
-          }
+            if(!o.finished)
+            {
 
+              //check if the rocket collides with the obstacle
+              if(this.obstacle.collision(o.position))
+              {
+                o.collision=true;
+                o.finished=true;
+              }
+              if(this.target.collision(o.position))
+              {
+                o.hitTarget=true;
+                o.finished=true;
+                o.time=++this.pos;
+                console.log(this.pos);
+              }
+
+              o.update();
+            }
+          }
         }
       }
 
-    allPhrases()
+    //pick one element of the population basing on its fitness and so to its probability
+    pickOne()
     {
-      let everything = "";
+      //normalizes the probability
+      this.naturalSelection();
 
-      let displayLimit = min(this.population.length, 50);
-
-
-      for (let i = 0; i < displayLimit; i++) {
-        everything += this.population[i].genes.join("") + "<br>";
+      var select = 0;
+      var selector = Math.random();
+      while(selector > 0)
+      {
+          selector-=this.population[select].prob;
+          /*scores[] is the table containing the percentage of selection of each element,
+          for example, if element 3 has a 12 percent chance of being selected, scores[3] = 0.12*/
+          select++;
       }
-      return everything;
+      select--;
+      //Here, add element at index select to the new population
+      return this.population[select].dna;
     }
 }

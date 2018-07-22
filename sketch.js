@@ -1,17 +1,18 @@
 var target;
-var mutationRate = 0.001;
-var maxPop = 15;
+var mutationRate = 0.01;
+var maxPop = 200;
 var people;
 var roc;
-
+var obstacle;
+var precMax=0;
 function setup()
 {
 
   createCanvas(800,600);
 
   target = new Circle(0,20,15);
-
-  people = new Population(target,mutationRate,maxPop)
+  obstacle = new Obstacle(0-200,(height/2),400,10);
+  people = new Population(target,obstacle,mutationRate,maxPop)
 
   fitP = createP('max fitness: 0<br>speed:'+people.velocity);
   generationP = createP();
@@ -34,14 +35,17 @@ function draw()
   people.calculateFitness();
   if(people.toUpdate)
   {
-    fitP.html("max fitnes: "+people.maxFitness()+"<br> speed:"+people.velocity)
+    var maxF=people.maxFitness();
+    //fitnes>1 its getting better, <1 its getting badder
+    fitP.html("max fitnes: "+map(maxF,0,precMax,0,1)+"<br> speed:"+people.velocity)
+    precMax=maxF;
 
-    people.naturalSelection();
     people.generate();
     people.toUpdate=false;
   }
 
   target.draw();
+  obstacle.draw();
 
   generationP.html("PRESS ON THE CANVAS TO MOVE THE TARGET!<br>generation: "+people.generation+"<br> mutation rate: "+(mutationRate*100)+"%");
 
